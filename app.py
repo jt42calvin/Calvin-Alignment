@@ -70,7 +70,7 @@ def calculate():
         overall_match = sum(weighted_percentages)
 
         # Return results as JSON
-        return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
+        return jsonify(result="Calculation successful", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
     except Exception as e:
         logging.error(f"Error in calculate route: {e}")
         return jsonify(error=str(e)), 500
@@ -97,7 +97,7 @@ def random_student():
         weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]
         weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
         overall_match = sum(weighted_percentages)
-        return jsonify(student_data=student_data, result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
+        return jsonify(student_data=student_data, result="Calculation successful", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
     except Exception as e:
         logging.error(f"Error in random_student route: {e}")
         return jsonify(error=str(e)), 500
