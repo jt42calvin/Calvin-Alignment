@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import requests
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 
@@ -32,7 +35,7 @@ def calculate():
     student_academic_level = request.form['student_academic_level']
 
     # Call Azure web service
-    azure_service_url = "https://core290-jt42calvin-percent-bhebczfybmhtf4fe.eastus-01.azurewebsites.net"
+    azure_service_url = "https://core290-jt42calvin-percent-bhebczfybmhtf4fe.eastus-01.azurewebsites.net/api/calculate"
     payload = {
         'gender': gender,
         'ethnicity': ethnicity,
@@ -45,10 +48,44 @@ def calculate():
     response = requests.post(azure_service_url, json=payload)
     result = response.json()
 
+    # Generate charts
+    bar_chart = generate_bar_chart(result['percentages'])
+    pie_chart = generate_pie_chart(result['percentages'])
+
     # Return results as JSON
-    return jsonify(result=result['result_text'], percentages=result['percentages'])
+    return jsonify(result=result['result_text'], bar_chart=bar_chart, pie_chart=pie_chart)
+
+def generate_bar_chart(percentages):
+    fig, ax = plt.subplots()
+    categories = list(percentages.keys())
+    values = list(percentages.values())
+    ax.bar(categories, values)
+    ax.set_xlabel('Categories')
+    ax.set_ylabel('Percentages')
+    ax.set_title('Bar Chart of Percentages')
+
+    # Save the plot to a bytes buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    bar_chart = base64.b64encode(buf.getvalue()).decode('utf-8')
+    buf.close()
+    return bar_chart
+
+def generate_pie_chart(percentages):
+    fig, ax = plt.subplots()
+    categories = list(percentages.keys())
+    values = list(percentages.values())
+    ax.pie(values, labels=categories, autopct='%1.1f%%')
+    ax.set_title('Pie Chart of Percentages')
+
+    # Save the plot to a bytes buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    pie_chart = base64.b64encode(buf.getvalue()).decode('utf-8')
+    buf.close()
+    return pie_chart
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
-## 

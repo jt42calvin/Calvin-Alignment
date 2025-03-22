@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calvin Percentage Alignment Calculator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://unpkg.com/htmx.org@1.5.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Calvin Percent</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Calvin Percentage Alignment Calculator</h1>
-        <form hx-post="/calculate" hx-target="#result" hx-swap="innerHTML">
-            <label for="gender">Select Gender:</label>
-            <select id="gender" name="gender">
-                {% for gender in genders %}
-                <option value="{{ gender }}">{{ gender }}</option>
-                {% endfor %}
-            </select>
+    <form action="/calculate" method="post">
+        <!-- Add your form fields here -->
+        <button type="submit">Calculate</button>
+    </form>
 
-            <label for="ethnicity">Select Ethnicity:</label>
-            <select id="ethnicity" name="ethnicity">
-                {% for ethnicity in ethnicities %}
-                <option value="{{ ethnicity }}">{{ ethnicity }}</option>
-                {% endfor %}
-            </select>
-
-            <!-- Add other dropdowns similarly -->
-
-            <button type="submit">Compare</button>
-        </form>
-        <div id="result"></div>
+    <div id="result">
+        <h2>Result</h2>
+        <p id="result_text"></p>
+        <img id="bar_chart" src="" alt="Bar Chart">
+        <img id="pie_chart" src="" alt="Pie Chart">
     </div>
 
     <script>
-        // JavaScript to handle chart rendering
+        document.querySelector('form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            document.getElementById('result_text').textContent = data.result;
+            document.getElementById('bar_chart').src = 'data:image/png;base64,' + data.bar_chart;
+            document.getElementById('pie_chart').src = 'data:image/png;base64,' + data.pie_chart;
+        });
     </script>
 </body>
 </html>
