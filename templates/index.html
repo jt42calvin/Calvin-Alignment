@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <div class="banner">
+        <span class="banner-text">Calvin Alignment Calculator</span>
+        <button id="infoButton">Info</button>
+    </div>
+
     <div class="container">
         <form action="/calculate" method="post" class="form-container">
             <label for="gender">Gender:</label>
@@ -75,8 +80,21 @@
             <h2>Result</h2>
             <p id="result_text"></p>
             <div id="percentages" class="percentages"></div>
-            <img id="bar_chart" src="" alt="Bar Chart">
-            <img id="pie_chart" src="" alt="Pie Chart">
+            <div class="charts">
+                <img id="bar_chart" src="" alt="Bar Chart">
+                <img id="pie_chart" src="" alt="Pie Chart">
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Information</h2>
+            <p>Author: Jacob Tocila, Calvin University Hackathon 2025</p>
+            <p>Bible Verse: "There is neither Jew nor Greek, slave nor free, male nor female, for you are all one in Christ Jesus." - Galatians 3:28</p>
+            <p>Tech Stack: This application is built using Flask, Pandas, Matplotlib, BytesIO, Python, and JavaScript. Hosted with Azure.</p>
         </div>
     </div>
 
@@ -125,6 +143,25 @@
         document.getElementById('randomStudentButton').addEventListener('click', async function() {
             await fetchAndDisplayResults('/random_student');
         });
+
+        // Modal functionality
+        const modal = document.getElementById('infoModal');
+        const btn = document.getElementById('infoButton');
+        const span = document.getElementsByClassName('close')[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
 </body>
 </html>

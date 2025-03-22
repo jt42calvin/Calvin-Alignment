@@ -65,7 +65,7 @@ def calculate():
         pie_chart = generate_pie_chart(percentages)
 
         # Calculate weighted overall match
-        weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]  # Adjusted weights to prioritize gender, ethnicity, and continent
+        weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]  # Weights for overall calc are in this order: gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level
         weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
         overall_match = sum(weighted_percentages)
 
