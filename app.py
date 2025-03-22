@@ -61,10 +61,33 @@ def calculate():
         bar_chart = generate_bar_chart(percentages)
         pie_chart = generate_pie_chart(percentages)
 
+        # Calculate weighted overall match
+        weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]  # Adjusted weights to prioritize gender, ethnicity, and continent
+        weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
+        overall_match = sum(weighted_percentages)
+
         # Return results as JSON
-        return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages)
+        return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
     except Exception as e:
         logging.error(f"Error in calculate route: {e}")
+        return jsonify(error=str(e)), 500
+
+@app.route('/random_student', methods=['GET'])
+def random_student():
+    try:
+        random_student = df.sample(n=1).iloc[0]
+        student_data = {
+            "gender": random_student["Gender"],
+            "ethnicity": random_student["Ethnicity"],
+            "fulltime_parttime": random_student["FullTimePartTimeIndicator"],
+            "church_affiliation": random_student["ChurchAffiliation"],
+            "continent": random_student["Continent"],
+            "child_of_alumni": random_student["AlumniChild"],
+            "student_academic_level": random_student["StudentAcademicLevel"]
+        }
+        return jsonify(student_data)
+    except Exception as e:
+        logging.error(f"Error in random_student route: {e}")
         return jsonify(error=str(e)), 500
 
 def calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level):
@@ -105,7 +128,7 @@ def generate_bar_chart(percentages):
     fig, ax = plt.subplots()
     categories = list(percentages.keys())
     values = list(percentages.values())
-    ax.bar(categories, values)
+    ax.bar(categories, values, color='gold')
     ax.set_xlabel('Categories')
     ax.set_ylabel('Percentages')
     ax.set_title('Bar Chart of Percentages')
@@ -122,7 +145,7 @@ def generate_pie_chart(percentages):
     fig, ax = plt.subplots()
     categories = list(percentages.keys())
     values = list(percentages.values())
-    ax.pie(values, labels=categories, autopct='%1.1f%%')
+    ax.pie(values, labels=categories, autopct='%1.1f%%', colors=['#800000', '#FFD700', '#FF6347', '#4682B4', '#32CD32', '#FF4500', '#DA70D6'])
     ax.set_title('Pie Chart of Percentages')
 
     # Save the plot to a bytes buffer

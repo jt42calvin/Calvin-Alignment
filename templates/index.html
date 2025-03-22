@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Percent</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        .percentages p {
-            color: maroon;
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -71,7 +65,10 @@
                 {% endfor %}
             </select>
 
-            <button type="submit">Calculate</button>
+            <div class="button-container">
+                <button type="button" id="randomStudentButton">Pick Random Student</button>
+                <button type="submit">Calculate</button>
+            </div>
         </form>
 
         <div id="result" class="result-container">
@@ -80,6 +77,16 @@
             <div id="percentages" class="percentages"></div>
             <img id="bar_chart" src="" alt="Bar Chart">
             <img id="pie_chart" src="" alt="Pie Chart">
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Alignment Results</h2>
+            <div id="modal_percentages" class="percentages"></div>
+            <p id="modal_overall_match"></p>
         </div>
     </div>
 
@@ -103,6 +110,54 @@
                 p.textContent = `${category}: ${percentage.toFixed(2)}%`;
                 percentagesDiv.appendChild(p);
             }
+
+            // Display overall match percentage
+            const overallMatchP = document.createElement('p');
+            overallMatchP.textContent = `Overall Match: ${data.overall_match}%`;
+            percentagesDiv.appendChild(overallMatchP);
+
+            // Show modal with results
+            const modal = document.getElementById('myModal');
+            const modalPercentagesDiv = document.getElementById('modal_percentages');
+            modalPercentagesDiv.innerHTML = '';
+            for (const [category, percentage] of Object.entries(data.percentages)) {
+                const p = document.createElement('p');
+                p.textContent = `${category}: ${percentage.toFixed(2)}%`;
+                modalPercentagesDiv.appendChild(p);
+            }
+            document.getElementById('modal_overall_match').textContent = `Overall Match: ${data.overall_match}%`;
+            modal.style.display = "block";
+        });
+
+        // Get the modal
+        const modal = document.getElementById('myModal');
+
+        // Get the <span> element that closes the modal
+        const span = document.getElementsByClassName('close')[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Handle "Pick Random Student" button click
+        document.getElementById('randomStudentButton').addEventListener('click', async function() {
+            const response = await fetch('/random_student');
+            const data = await response.json();
+            document.getElementById('gender').value = data.gender;
+            document.getElementById('ethnicity').value = data.ethnicity;
+            document.getElementById('fulltime_parttime').value = data.fulltime_parttime;
+            document.getElementById('church_affiliation').value = data.church_affiliation;
+            document.getElementById('continent').value = data.continent;
+            document.getElementById('child_of_alumni').value = data.child_of_alumni;
+            document.getElementById('student_academic_level').value = data.student_academic_level;
         });
     </script>
 </body>
