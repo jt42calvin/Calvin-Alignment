@@ -1,0 +1,25 @@
+body {
+    background-color: #323232;
+    color: white;
+    font-family: 'Helvetica', sans-serif;
+}
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+label, select, button {
+    display: block;
+    margin: 10px 0;
+}
+button {
+    background-color: #800000;
+    color: #FFD700;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #FFD700;
+    color: #800000;
+}
