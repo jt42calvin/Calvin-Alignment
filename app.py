@@ -34,26 +34,49 @@ def calculate():
     child_of_alumni = request.form['child_of_alumni']
     student_academic_level = request.form['student_academic_level']
 
-    # Call Azure web service
-    azure_service_url = "https://core290-jt42calvin-percent-bhebczfybmhtf4fe.eastus-01.azurewebsites.net/api/calculate"
-    payload = {
-        'gender': gender,
-        'ethnicity': ethnicity,
-        'fulltime_parttime': fulltime_parttime,
-        'church_affiliation': church_affiliation,
-        'continent': continent,
-        'child_of_alumni': child_of_alumni,
-        'student_academic_level': student_academic_level
-    }
-    response = requests.post(azure_service_url, json=payload)
-    result = response.json()
+    # Calculate alignment percentages
+    percentages = calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level)
 
     # Generate charts
-    bar_chart = generate_bar_chart(result['percentages'])
-    pie_chart = generate_pie_chart(result['percentages'])
+    bar_chart = generate_bar_chart(percentages)
+    pie_chart = generate_pie_chart(percentages)
 
     # Return results as JSON
-    return jsonify(result=result['result_text'], bar_chart=bar_chart, pie_chart=pie_chart)
+    return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages)
+
+def calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level):
+    total_students = len(df)
+    percentages = {}
+
+    if gender:
+        gender_count = len(df[df["Gender"] == gender])
+        percentages["Gender"] = (gender_count / total_students) * 100
+
+    if ethnicity:
+        ethnicity_count = len(df[df["Ethnicity"] == ethnicity])
+        percentages["Ethnicity"] = (ethnicity_count / total_students) * 100
+
+    if fulltime_parttime:
+        fulltime_parttime_count = len(df[df["FullTimePartTimeIndicator"] == fulltime_parttime])
+        percentages["Full-Time/Part-Time"] = (fulltime_parttime_count / total_students) * 100
+
+    if church_affiliation:
+        church_affiliation_count = len(df[df["ChurchAffiliation"] == church_affiliation])
+        percentages["Church Affiliation"] = (church_affiliation_count / total_students) * 100
+
+    if continent:
+        continent_count = len(df[df["Continent"] == continent])
+        percentages["Continent"] = (continent_count / total_students) * 100
+
+    if child_of_alumni:
+        child_of_alumni_count = len(df[df["AlumniChild"] == child_of_alumni])
+        percentages["Child of Alumni"] = (child_of_alumni_count / total_students) * 100
+
+    if student_academic_level:
+        student_academic_level_count = len(df[df["StudentAcademicLevel"] == student_academic_level])
+        percentages["Student Academic Level"] = (student_academic_level_count / total_students) * 100
+
+    return percentages
 
 def generate_bar_chart(percentages):
     fig, ax = plt.subplots()

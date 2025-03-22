@@ -4,18 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Percent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <form action="/calculate" method="post">
-        <!-- Add your form fields here -->
-        <button type="submit">Calculate</button>
-    </form>
+    <div class="container">
+        <form action="/calculate" method="post" class="form-container">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="" selected disabled>Select Gender</option>
+                {% for gender in genders %}
+                    <option value="{{ gender }}">{{ gender }}</option>
+                {% endfor %}
+            </select>
 
-    <div id="result">
-        <h2>Result</h2>
-        <p id="result_text"></p>
-        <img id="bar_chart" src="" alt="Bar Chart">
-        <img id="pie_chart" src="" alt="Pie Chart">
+            <label for="ethnicity">Ethnicity:</label>
+            <select id="ethnicity" name="ethnicity">
+                <option value="" selected disabled>Select Ethnicity</option>
+                {% for ethnicity in ethnicities %}
+                    <option value="{{ ethnicity }}">{{ ethnicity }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="fulltime_parttime">Full-Time/Part-Time:</label>
+            <select id="fulltime_parttime" name="fulltime_parttime">
+                <option value="" selected disabled>Select Status</option>
+                {% for status in fulltime_parttime %}
+                    <option value="{{ status }}">{{ status }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="church_affiliation">Church Affiliation:</label>
+            <select id="church_affiliation" name="church_affiliation">
+                <option value="" selected disabled>Select Affiliation</option>
+                {% for affiliation in church_affiliation %}
+                    <option value="{{ affiliation }}">{{ affiliation }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="continent">Continent:</label>
+            <select id="continent" name="continent">
+                <option value="" selected disabled>Select Continent</option>
+                {% for continent in continents %}
+                    <option value="{{ continent }}">{{ continent }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="child_of_alumni">Child of Alumni:</label>
+            <select id="child_of_alumni" name="child_of_alumni">
+                <option value="" selected disabled>Select Option</option>
+                {% for alumni in child_of_alumni %}
+                    <option value="{{ alumni }}">{{ alumni }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="student_academic_level">Student Academic Level:</label>
+            <select id="student_academic_level" name="student_academic_level">
+                <option value="" selected disabled>Select Level</option>
+                {% for level in student_academic_level %}
+                    <option value="{{ level }}">{{ level }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Calculate</button>
+        </form>
+
+        <div id="result" class="result-container">
+            <h2>Result</h2>
+            <p id="result_text"></p>
+            <div id="percentages"></div>
+            <img id="bar_chart" src="" alt="Bar Chart">
+            <img id="pie_chart" src="" alt="Pie Chart">
+        </div>
     </div>
 
     <script>
@@ -30,6 +89,14 @@
             document.getElementById('result_text').textContent = data.result;
             document.getElementById('bar_chart').src = 'data:image/png;base64,' + data.bar_chart;
             document.getElementById('pie_chart').src = 'data:image/png;base64,' + data.pie_chart;
+
+            const percentagesDiv = document.getElementById('percentages');
+            percentagesDiv.innerHTML = '';
+            for (const [category, percentage] of Object.entries(data.percentages)) {
+                const p = document.createElement('p');
+                p.textContent = `${category}: ${percentage.toFixed(2)}%`;
+                percentagesDiv.appendChild(p);
+            }
         });
     </script>
 </body>
