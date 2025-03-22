@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
+import requests
 
 app = Flask(__name__)
 
@@ -30,10 +31,22 @@ def calculate():
     child_of_alumni = request.form['child_of_alumni']
     student_academic_level = request.form['student_academic_level']
 
-    # Perform calculations (similar to your Tkinter logic)
+    # Call Azure web service
+    azure_service_url = "core290-jt42calvin-percent-bhebczfybmhtf4fe.eastus-01.azurewebsites.net"
+    payload = {
+        'gender': gender,
+        'ethnicity': ethnicity,
+        'fulltime_parttime': fulltime_parttime,
+        'church_affiliation': church_affiliation,
+        'continent': continent,
+        'child_of_alumni': child_of_alumni,
+        'student_academic_level': student_academic_level
+    }
+    response = requests.post(azure_service_url, json=payload)
+    result = response.json()
 
     # Return results as JSON
-    return jsonify(result=result_text, percentages=percentages)
+    return jsonify(result=result['result_text'], percentages=result['percentages'])
 
 if __name__ == '__main__':
     app.run(debug=True)
