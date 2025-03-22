@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, jsonify
-import pandas as pd
-import matplotlib.pyplot as plt
 import io
 import base64
 import logging
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Set the Matplotlib backend to 'Agg'
 plt.switch_backend('Agg')
@@ -65,7 +65,7 @@ def calculate():
         pie_chart = generate_pie_chart(percentages)
 
         # Calculate weighted overall match
-        weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]  # Weights for overall calc are in this order: gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level
+        weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]  # Adjusted weights to prioritize gender, ethnicity, and continent
         weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
         overall_match = sum(weighted_percentages)
 
@@ -143,8 +143,8 @@ def generate_bar_chart(percentages):
     ax.bar(categories, values, color='gold')
     ax.set_xlabel('Categories')
     ax.set_ylabel('Percentages')
+    ax.set_xticks(range(len(categories)))
     ax.set_xticklabels(categories, rotation=45, ha='right')
-    # ax.set_title('Bar Chart of Percentages')
 
     # Save the plot to a bytes buffer
     buf = io.BytesIO()
@@ -152,6 +152,7 @@ def generate_bar_chart(percentages):
     buf.seek(0)
     bar_chart = base64.b64encode(buf.getvalue()).decode('utf-8')
     buf.close()
+    plt.close(fig)  # Close the figure to free memory
     return bar_chart
 
 def generate_pie_chart(percentages):
@@ -159,7 +160,6 @@ def generate_pie_chart(percentages):
     categories = list(percentages.keys())
     values = list(percentages.values())
     ax.pie(values, labels=categories, autopct='%1.1f%%', colors=['#800000', '#FFD700', '#FF6347', '#4682B4', '#32CD32', '#FF4500', '#DA70D6'])
-    # ax.set_title('Pie Chart of Percentages')
 
     # Save the plot to a bytes buffer
     buf = io.BytesIO()
@@ -167,6 +167,7 @@ def generate_pie_chart(percentages):
     buf.seek(0)
     pie_chart = base64.b64encode(buf.getvalue()).decode('utf-8')
     buf.close()
+    plt.close(fig)  # Close the figure to free memory
     return pie_chart
 
 if __name__ == '__main__':

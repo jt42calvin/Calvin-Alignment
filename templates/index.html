@@ -7,84 +7,91 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="banner">
-        <span class="banner-text">Calvin Alignment Calculator</span>
+    <div class="header">
+        <span class="header-text">Calvin Alignment Calculator</span>
         <button id="infoButton">Info</button>
     </div>
 
     <div class="container">
-        <form action="/calculate" method="post" class="form-container">
-            <label for="gender">Gender:</label>
-            <select id="gender" name="gender">
-                <option value="" selected disabled>Select Gender</option>
-                {% for gender in genders %}
-                    <option value="{{ gender }}">{{ gender }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="ethnicity">Ethnicity:</label>
-            <select id="ethnicity" name="ethnicity">
-                <option value="" selected disabled>Select Ethnicity</option>
-                {% for ethnicity in ethnicities %}
-                    <option value="{{ ethnicity }}">{{ ethnicity }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="fulltime_parttime">Full-Time/Part-Time:</label>
-            <select id="fulltime_parttime" name="fulltime_parttime">
-                <option value="" selected disabled>Select Status</option>
-                {% for status in fulltime_parttime %}
-                    <option value="{{ status }}">{{ status }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="church_affiliation">Church Affiliation:</label>
-            <select id="church_affiliation" name="church_affiliation">
-                <option value="" selected disabled>Select Affiliation</option>
-                {% for affiliation in church_affiliation %}
-                    <option value="{{ affiliation }}">{{ affiliation }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="continent">Continent:</label>
-            <select id="continent" name="continent">
-                <option value="" selected disabled>Select Continent</option>
-                {% for continent in continents %}
-                    <option value="{{ continent }}">{{ continent }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="child_of_alumni">Child of Alumni:</label>
-            <select id="child_of_alumni" name="child_of_alumni">
-                <option value="" selected disabled>Select Option</option>
-                {% for alumni in child_of_alumni %}
-                    <option value="{{ alumni }}">{{ alumni }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="student_academic_level">Student Academic Level:</label>
-            <select id="student_academic_level" name="student_academic_level">
-                <option value="" selected disabled>Select Level</option>
-                {% for level in student_academic_level %}
-                    <option value="{{ level }}">{{ level }}</option>
-                {% endfor %}
-            </select>
-
-            <div class="button-container">
-                <button type="button" id="randomStudentButton">Pick Random Student</button>
-                <button type="submit">Calculate</button>
-            </div>
-        </form>
-
-        <div id="result" class="result-container">
-            <h2>Result</h2>
-            <p id="result_text"></p>
+        <div class="left-content">
             <div id="percentages" class="percentages"></div>
+        </div>
+
+        <div class="main-content">
+            <form action="/calculate" method="post" class="form-container">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender">
+                    <option value="" selected disabled>Select Gender</option>
+                    {% for gender in genders %}
+                        <option value="{{ gender }}">{{ gender }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="ethnicity">Ethnicity:</label>
+                <select id="ethnicity" name="ethnicity">
+                    <option value="" selected disabled>Select Ethnicity</option>
+                    {% for ethnicity in ethnicities %}
+                        <option value="{{ ethnicity }}">{{ ethnicity }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="fulltime_parttime">Full-Time/Part-Time:</label>
+                <select id="fulltime_parttime" name="fulltime_parttime">
+                    <option value="" selected disabled>Select Status</option>
+                    {% for status in fulltime_parttime %}
+                        <option value="{{ status }}">{{ status }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="church_affiliation">Church Affiliation:</label>
+                <select id="church_affiliation" name="church_affiliation">
+                    <option value="" selected disabled>Select Affiliation</option>
+                    {% for affiliation in church_affiliation %}
+                        <option value="{{ affiliation }}">{{ affiliation }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="continent">Continent:</label>
+                <select id="continent" name="continent">
+                    <option value="" selected disabled>Select Continent</option>
+                    {% for continent in continents %}
+                        <option value="{{ continent }}">{{ continent }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="child_of_alumni">Child of Alumni:</label>
+                <select id="child_of_alumni" name="child_of_alumni">
+                    <option value="" selected disabled>Select Option</option>
+                    {% for alumni in child_of_alumni %}
+                        <option value="{{ alumni }}">{{ alumni }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="student_academic_level">Student Academic Level:</label>
+                <select id="student_academic_level" name="student_academic_level">
+                    <option value="" selected disabled>Select Level</option>
+                    {% for level in student_academic_level %}
+                        <option value="{{ level }}">{{ level }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="button-container">
+                    <button type="button" id="randomStudentButton">Pick Random Student</button>
+                    <button type="submit">Calculate</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="right-content">
             <div class="charts">
-                <img id="bar_chart" src="" alt="Bar Chart">
                 <img id="pie_chart" src="" alt="Pie Chart">
+                <img id="bar_chart" src="" alt="Bar Chart">
             </div>
         </div>
+    </div>
+
+    <div class="footer">
+        <span class="footer-text">Calvin Hackathon 2025</span>
     </div>
 
     <!-- The Modal -->
@@ -92,9 +99,9 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Information</h2>
-            <p>Author: Jacob Tocila, Calvin University Hackathon 2025</p>
+            <p>Credits: Jacob Tocila, Calvin University Hackathon 2025</p>
             <p>Bible Verse: "There is neither Jew nor Greek, slave nor free, male nor female, for you are all one in Christ Jesus." - Galatians 3:28</p>
-            <p>Tech Stack: This application is built using Flask, Pandas, Matplotlib, BytesIO, Python, and JavaScript. Hosted with Azure.</p>
+            <p>Tech Stack: This application is built using Flask, Pandas, Matplotlib, and JavaScript. Hosted with Azure.</p>
         </div>
     </div>
 
@@ -141,6 +148,15 @@
         });
 
         document.getElementById('randomStudentButton').addEventListener('click', async function() {
+            const response = await fetch('/random_student');
+            const data = await response.json();
+            document.getElementById('gender').value = data.student_data.gender;
+            document.getElementById('ethnicity').value = data.student_data.ethnicity;
+            document.getElementById('fulltime_parttime').value = data.student_data.fulltime_parttime;
+            document.getElementById('church_affiliation').value = data.student_data.church_affiliation;
+            document.getElementById('continent').value = data.student_data.continent;
+            document.getElementById('child_of_alumni').value = data.student_data.child_of_alumni;
+            document.getElementById('student_academic_level').value = data.student_data.student_academic_level;
             await fetchAndDisplayResults('/random_student');
         });
 
