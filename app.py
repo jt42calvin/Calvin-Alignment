@@ -131,7 +131,8 @@ def generate_bar_chart(percentages):
     ax.bar(categories, values, color='gold')
     ax.set_xlabel('Categories')
     ax.set_ylabel('Percentages')
-    ax.set_title('Bar Chart of Percentages')
+    ax.set_xticklabels(categories, rotation=45, ha='right')
+    # ax.set_title('Bar Chart of Percentages')
 
     # Save the plot to a bytes buffer
     buf = io.BytesIO()
@@ -146,7 +147,7 @@ def generate_pie_chart(percentages):
     categories = list(percentages.keys())
     values = list(percentages.values())
     ax.pie(values, labels=categories, autopct='%1.1f%%', colors=['#800000', '#FFD700', '#FF6347', '#4682B4', '#32CD32', '#FF4500', '#DA70D6'])
-    ax.set_title('Pie Chart of Percentages')
+    # ax.set_title('Pie Chart of Percentages')
 
     # Save the plot to a bytes buffer
     buf = io.BytesIO()
