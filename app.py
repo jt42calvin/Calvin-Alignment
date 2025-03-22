@@ -69,8 +69,30 @@ def calculate():
         weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
         overall_match = sum(weighted_percentages)
 
+        # Count exact matches
+        exact_matches = df[
+            (df["Gender"] == gender) &
+            (df["Ethnicity"] == ethnicity) &
+            (df["FullTimePartTimeIndicator"] == fulltime_parttime) &
+            (df["ChurchAffiliation"] == church_affiliation) &
+            (df["Continent"] == continent) &
+            (df["AlumniChild"] == child_of_alumni) &
+            (df["StudentAcademicLevel"] == student_academic_level)
+        ].shape[0]
+
+        # Total number of students in the dataset
+        total_students = df.shape[0]
+
         # Return results as JSON
-        return jsonify(result="Calculation successful", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
+        return jsonify(
+            result="Calculation successful",
+            bar_chart=bar_chart,
+            pie_chart=pie_chart,
+            percentages=percentages,
+            overall_match=round(overall_match, 2),
+            exact_matches=exact_matches,
+            total_students=total_students
+        )
     except Exception as e:
         logging.error(f"Error in calculate route: {e}")
         return jsonify(error=str(e)), 500
@@ -97,7 +119,26 @@ def random_student():
         weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]
         weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
         overall_match = sum(weighted_percentages)
-        return jsonify(student_data=student_data, result="Calculation successful", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
+        exact_matches = df[
+            (df["Gender"] == student_data["gender"]) &
+            (df["Ethnicity"] == student_data["ethnicity"]) &
+            (df["FullTimePartTimeIndicator"] == student_data["fulltime_parttime"]) &
+            (df["ChurchAffiliation"] == student_data["church_affiliation"]) &
+            (df["Continent"] == student_data["continent"]) &
+            (df["AlumniChild"] == student_data["child_of_alumni"]) &
+            (df["StudentAcademicLevel"] == student_data["student_academic_level"])
+        ].shape[0]
+        total_students = df.shape[0]
+        return jsonify(
+            student_data=student_data,
+            result="Calculation successful",
+            bar_chart=bar_chart,
+            pie_chart=pie_chart,
+            percentages=percentages,
+            overall_match=round(overall_match, 2),
+            exact_matches=exact_matches,
+            total_students=total_students
+        )
     except Exception as e:
         logging.error(f"Error in random_student route: {e}")
         return jsonify(error=str(e)), 500
@@ -140,15 +181,17 @@ def generate_bar_chart(percentages):
     fig, ax = plt.subplots()
     categories = list(percentages.keys())
     values = list(percentages.values())
-    ax.bar(categories, values, color='gold')
-    ax.set_xlabel('Categories')
+    ax.bar(categories, values, color=['gold', 'maroon', 'gold', 'maroon', 'gold', 'maroon', 'gold'])
     ax.set_ylabel('Percentages')
     ax.set_xticks(range(len(categories)))
     ax.set_xticklabels(categories, rotation=45, ha='right')
 
+    # Adjust layout to minimize whitespace
+    plt.tight_layout()
+
     # Save the plot to a bytes buffer
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0.1)
     buf.seek(0)
     bar_chart = base64.b64encode(buf.getvalue()).decode('utf-8')
     buf.close()
@@ -159,11 +202,14 @@ def generate_pie_chart(percentages):
     fig, ax = plt.subplots()
     categories = list(percentages.keys())
     values = list(percentages.values())
-    ax.pie(values, labels=categories, autopct='%1.1f%%', colors=['#800000', '#FFD700', '#FF6347', '#4682B4', '#32CD32', '#FF4500', '#DA70D6'])
+    ax.pie(values, labels=categories, autopct='%1.1f%%', colors=['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E6E6FA', '#FFD1DC'], textprops={'fontsize': 14})
+
+    # Adjust layout to minimize whitespace
+    plt.tight_layout()
 
     # Save the plot to a bytes buffer
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0.1)
     buf.seek(0)
     pie_chart = base64.b64encode(buf.getvalue()).decode('utf-8')
     buf.close()

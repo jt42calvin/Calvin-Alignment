@@ -119,16 +119,30 @@
 
                 const percentagesDiv = document.getElementById('percentages');
                 percentagesDiv.innerHTML = '';
-                for (const [category, percentage] of Object.entries(data.percentages)) {
+
+                // Display percentage for each category
+                for (const [key, value] of Object.entries(data.percentages)) {
                     const p = document.createElement('p');
-                    p.textContent = `${category}: ${percentage.toFixed(2)}%`;
+                    p.textContent = `${key}: ${value.toFixed(2)}%`;
                     percentagesDiv.appendChild(p);
                 }
+
+                const separator = document.createElement('hr');
+                percentagesDiv.appendChild(separator);
 
                 // Display overall match percentage
                 const overallMatchP = document.createElement('p');
                 overallMatchP.textContent = `Overall Match: ${data.overall_match}%`;
                 percentagesDiv.appendChild(overallMatchP);
+
+                // Display exact matches and total students
+                const exactMatchesP = document.createElement('p');
+                exactMatchesP.textContent = `Number of students exactly like you: ${data.exact_matches}`;
+                percentagesDiv.appendChild(exactMatchesP);
+
+                const totalStudentsP = document.createElement('p');
+                totalStudentsP.textContent = `There are ${data.total_students} students in the dataset as of Fall 2024`;
+                percentagesDiv.appendChild(totalStudentsP);
             } else {
                 console.error('Error during calculation:', data.result);
             }
@@ -161,7 +175,8 @@
             document.getElementById('continent').value = data.student_data.continent;
             document.getElementById('child_of_alumni').value = data.student_data.child_of_alumni;
             document.getElementById('student_academic_level').value = data.student_data.student_academic_level;
-            await fetchAndDisplayResults('/calculate', new FormData());
+            const formData = new FormData(document.querySelector('form'));
+            await fetchAndDisplayResults('/calculate', formData);
         });
 
         // Modal functionality
