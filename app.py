@@ -5,6 +5,9 @@ import io
 import base64
 import logging
 
+# Set the Matplotlib backend to 'Agg'
+plt.switch_backend('Agg')
+
 app = Flask(__name__)
 
 # Configure logging
@@ -85,7 +88,16 @@ def random_student():
             "child_of_alumni": random_student["AlumniChild"],
             "student_academic_level": random_student["StudentAcademicLevel"]
         }
-        return jsonify(student_data)
+        # Call calculate function with the random student's data
+        percentages = calculate_percentages(student_data["gender"], student_data["ethnicity"], student_data["fulltime_parttime"],
+                                            student_data["church_affiliation"], student_data["continent"], student_data["child_of_alumni"],
+                                            student_data["student_academic_level"])
+        bar_chart = generate_bar_chart(percentages)
+        pie_chart = generate_pie_chart(percentages)
+        weights = [0.30, 0.30, 0.05, 0.05, 0.20, 0.05, 0.05]
+        weighted_percentages = [percent * weight for percent, weight in zip(percentages.values(), weights)]
+        overall_match = sum(weighted_percentages)
+        return jsonify(student_data=student_data, result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages, overall_match=round(overall_match, 2))
     except Exception as e:
         logging.error(f"Error in random_student route: {e}")
         return jsonify(error=str(e)), 500

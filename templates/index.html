@@ -103,6 +103,17 @@
             const overallMatchP = document.createElement('p');
             overallMatchP.textContent = `Overall Match: ${data.overall_match}%`;
             percentagesDiv.appendChild(overallMatchP);
+
+            // If the response includes student data, autofill the form
+            if (data.student_data) {
+                document.getElementById('gender').value = data.student_data.gender;
+                document.getElementById('ethnicity').value = data.student_data.ethnicity;
+                document.getElementById('fulltime_parttime').value = data.student_data.fulltime_parttime;
+                document.getElementById('church_affiliation').value = data.student_data.church_affiliation;
+                document.getElementById('continent').value = data.student_data.continent;
+                document.getElementById('child_of_alumni').value = data.student_data.child_of_alumni;
+                document.getElementById('student_academic_level').value = data.student_data.student_academic_level;
+            }
         }
 
         document.querySelector('form').addEventListener('submit', async function(event) {
