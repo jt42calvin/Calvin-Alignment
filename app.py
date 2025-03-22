@@ -3,25 +3,37 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import base64
+import logging
 
 app = Flask(__name__)
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
 # Load Census Data from CSV
 file_path = "data/Census Day Report FA24 modified for Jacob Tocila.csv"
-df = pd.read_csv(file_path)
+try:
+    df = pd.read_csv(file_path)
+    logging.info("CSV file loaded successfully.")
+except Exception as e:
+    logging.error(f"Error loading CSV file: {e}")
 
 @app.route('/')
 def index():
-    genders = df["Gender"].dropna().unique().tolist()
-    ethnicities = df["Ethnicity"].dropna().unique().tolist()
-    fulltime_parttime = df["FullTimePartTimeIndicator"].dropna().unique().tolist()
-    church_affiliation = df["ChurchAffiliation"].dropna().unique().tolist()
-    continents = df["Continent"].dropna().unique().tolist()
-    child_of_alumni = df["AlumniChild"].dropna().unique().tolist()
-    student_academic_level = df["StudentAcademicLevel"].dropna().unique().tolist()
-    return render_template('index.html', genders=genders, ethnicities=ethnicities, fulltime_parttime=fulltime_parttime,
-                           church_affiliation=church_affiliation, continents=continents, child_of_alumni=child_of_alumni,
-                           student_academic_level=student_academic_level)
+    try:
+        genders = df["Gender"].dropna().unique().tolist()
+        ethnicities = df["Ethnicity"].dropna().unique().tolist()
+        fulltime_parttime = df["FullTimePartTimeIndicator"].dropna().unique().tolist()
+        church_affiliation = df["ChurchAffiliation"].dropna().unique().tolist()
+        continents = df["Continent"].dropna().unique().tolist()
+        child_of_alumni = df["AlumniChild"].dropna().unique().tolist()
+        student_academic_level = df["StudentAcademicLevel"].dropna().unique().tolist()
+        return render_template('index.html', genders=genders, ethnicities=ethnicities, fulltime_parttime=fulltime_parttime,
+                               church_affiliation=church_affiliation, continents=continents, child_of_alumni=child_of_alumni,
+                               student_academic_level=student_academic_level)
+    except Exception as e:
+        logging.error(f"Error in index route: {e}")
+        return "Error loading data", 500
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
@@ -35,15 +47,15 @@ def calculate():
         student_academic_level = request.form['student_academic_level']
 
         # Log received data
-        print(f"Received data: gender={gender}, ethnicity={ethnicity}, fulltime_parttime={fulltime_parttime}, "
-              f"church_affiliation={church_affiliation}, continent={continent}, child_of_alumni={child_of_alumni}, "
-              f"student_academic_level={student_academic_level}")
+        logging.info(f"Received data: gender={gender}, ethnicity={ethnicity}, fulltime_parttime={fulltime_parttime}, "
+                     f"church_affiliation={church_affiliation}, continent={continent}, child_of_alumni={child_of_alumni}, "
+                     f"student_academic_level={student_academic_level}")
 
         # Calculate alignment percentages
         percentages = calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level)
 
         # Log calculated percentages
-        print(f"Calculated percentages: {percentages}")
+        logging.info(f"Calculated percentages: {percentages}")
 
         # Generate charts
         bar_chart = generate_bar_chart(percentages)
@@ -52,6 +64,7 @@ def calculate():
         # Return results as JSON
         return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages)
     except Exception as e:
+        logging.error(f"Error in calculate route: {e}")
         return jsonify(error=str(e)), 500
 
 def calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level):
