@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
-import requests
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -26,23 +25,34 @@ def index():
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    gender = request.form['gender']
-    ethnicity = request.form['ethnicity']
-    fulltime_parttime = request.form['fulltime_parttime']
-    church_affiliation = request.form['church_affiliation']
-    continent = request.form['continent']
-    child_of_alumni = request.form['child_of_alumni']
-    student_academic_level = request.form['student_academic_level']
+    try:
+        gender = request.form['gender']
+        ethnicity = request.form['ethnicity']
+        fulltime_parttime = request.form['fulltime_parttime']
+        church_affiliation = request.form['church_affiliation']
+        continent = request.form['continent']
+        child_of_alumni = request.form['child_of_alumni']
+        student_academic_level = request.form['student_academic_level']
 
-    # Calculate alignment percentages
-    percentages = calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level)
+        # Log received data
+        print(f"Received data: gender={gender}, ethnicity={ethnicity}, fulltime_parttime={fulltime_parttime}, "
+              f"church_affiliation={church_affiliation}, continent={continent}, child_of_alumni={child_of_alumni}, "
+              f"student_academic_level={student_academic_level}")
 
-    # Generate charts
-    bar_chart = generate_bar_chart(percentages)
-    pie_chart = generate_pie_chart(percentages)
+        # Calculate alignment percentages
+        percentages = calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level)
 
-    # Return results as JSON
-    return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages)
+        # Log calculated percentages
+        print(f"Calculated percentages: {percentages}")
+
+        # Generate charts
+        bar_chart = generate_bar_chart(percentages)
+        pie_chart = generate_pie_chart(percentages)
+
+        # Return results as JSON
+        return jsonify(result="Your alignment with Calvin's population", bar_chart=bar_chart, pie_chart=pie_chart, percentages=percentages)
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 def calculate_percentages(gender, ethnicity, fulltime_parttime, church_affiliation, continent, child_of_alumni, student_academic_level):
     total_students = len(df)

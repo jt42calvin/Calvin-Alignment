@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Percent</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .percentages p {
+            color: maroon;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -71,7 +77,7 @@
         <div id="result" class="result-container">
             <h2>Result</h2>
             <p id="result_text"></p>
-            <div id="percentages"></div>
+            <div id="percentages" class="percentages"></div>
             <img id="bar_chart" src="" alt="Bar Chart">
             <img id="pie_chart" src="" alt="Pie Chart">
         </div>
