@@ -32,7 +32,7 @@ def calculate():
     student_academic_level = request.form['student_academic_level']
 
     # Call Azure web service
-    azure_service_url = "core290-jt42calvin-percent-bhebczfybmhtf4fe.eastus-01.azurewebsites.net"
+    azure_service_url = "https://core290-jt42calvin-percent-bhebczfybmhtf4fe.eastus-01.azurewebsites.net"
     payload = {
         'gender': gender,
         'ethnicity': ethnicity,
